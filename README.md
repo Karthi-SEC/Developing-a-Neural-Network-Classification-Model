@@ -53,48 +53,37 @@ Use the trained model to classify customers in the new market into segments A, B
 class PeopleClassifier(nn.Module):
     def __init__(self, input_size):
         super(PeopleClassifier, self).__init__()
-        #Include your code here
         self.fc1 = nn.Linear(input_size,32)
         self.fc2 = nn.Linear(32,16)
         self.fc3 = nn.Linear(16,8)
         self.fc4 = nn.Linear(8,4)
 
     def forward(self, x):
-          x = F.relu(self.fc1(x))
-          x = F.relu(self.fc2(x))
-          x = F.relu(self.fc3(x))
-          x = self.fc4(x) #changed fc3 to fc4 to use  correct layer
-          return x
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = self.fc4(x)
+        return x
 
-
-    def train_model(model, train_loader, criterion, optimizer, epochs):
-  #Include your code here
-      model.train()
-      for epoch in range(epochs):
-        for inputs , labels in train_loader:
-          optimizer.zero_grad()
-          outputs = model(inputs)
-          loss = criterion(outputs,labels)
-          loss.backward()
-          optimizer.step()
-      if (epoch + 1) % 10 == 0:
-          print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}')
         
 # Initialize the Model, Loss Function, and Optimizer
-model = PeopleClassifier(input_size = X_train.shape[1])
+model =PeopleClassifier(input_size=X_train.shape[1])
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(),lr=0.001)
 
+
 def train_model(model, train_loader, criterion, optimizer, epochs):
-    #Include your code here
-    model.eval()
-    predictions, actuals = [], []
-    with torch.no_grad():
-        for X_batch, y_batch in test_loader:
-            outputs = model(X_batch)
-            _, predicted = torch.max(outputs, 1)
-            predictions.extend(predicted.numpy())
-            actuals.extend(y_batch.numpy())
+  model.train()
+  for epoch in range(epochs):
+    for inputs, labels in train_loader:
+      optimizer.zero_grad()
+      outputs = model(inputs)
+      loss = criterion(outputs , labels)
+      loss.backward()
+      optimizer.step()
+
+  if (epoch + 1) % 10 == 0:
+        print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}')
 
 ```
 
